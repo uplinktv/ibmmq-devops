@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>tv.thuplink</groupId>
+  <artifactId>ibmmq-devops</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>The Uplink TV :: IBMMQ Devops</name>
+  <description>Automate IBM MQ environments</description>
+  <organization>
+    <name>The Uplink TV</name>
+    <url>http://theuplink.tv</url>
+  </organization>
+  <dependencies/>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <rpm-maven-plugin.version>2.2.0</rpm-maven-plugin.version>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rpm-maven-plugin</artifactId>
+        <version>${rpm-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>generate-rpm</id>
+            <goals>
+              <goal>rpm</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <license>GPLv3 (c) 2020, The Uplink TV</license>
+          <distribution>The Uplink TV</distribution>
+          <group>Application/Messaging</group>
+          <!-- icon>src/main/resources/icon.gif</icon -->
+          <packager>TheUplinkTV</packager>
+          <prefix>/opt/uplink/ibmmq-devops</prefix>
+          <changelogFile>target/classes/changelog</changelogFile>
+          <defineStatements>
+            <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+          </defineStatements>
+          <mappings>
+            <mapping>
+              <directory>/opt/uplink/ibmmq-devops/bin/ibmmq-devops</directory>
+              <filemode>440</filemode>
+              <username>mqm</username>
+              <groupname>mqm</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/bin</location>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
+              <directory>/opt/uplink/ibmmq-devops/etc</directory>
+              <configuration>true</configuration>
+              <filemode>640</filemode>
+              <username>mqm</username>
+              <groupname>mqm</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/etc</location>
+                </source>
+              </sources>
+            </mapping>
+          </mappings>
+          <preinstallScriptlet>
+            <script>echo "installing ${project.name} now"</script>
+          </preinstallScriptlet>
+	  <!--
+          <postinstallScriptlet>
+            <scriptFile>src/main/scripts/postinstall</scriptFile>
+            <fileEncoding>utf-8</fileEncoding>
+            <filter>true</filter>
+          </postinstallScriptlet>
+          <preremoveScriptlet>
+            <scriptFile>src/main/scripts/preremove</scriptFile>
+            <fileEncoding>utf-8</fileEncoding>
+          </preremoveScriptlet>
+          -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
