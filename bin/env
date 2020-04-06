@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo -n "Creating QM914..."
+. /opt/mqm914/bin/setmqenv -n Installation4
+/opt/mqm914/bin/crtmqm -lc -lf 65535 -lp 3 -ls 2 -u SYSTEM.DEAD.LETTER.QUEUE QM914
+/opt/mqm914/bin/strmqm QM914
+echo "done"

@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# Copyright © 2020 The Uplink TV. All Rights Reserved.
+#
+# This project is subject to the terms and conditions defined in
+# file 'LICENSE', which is part of this source code package.
+#
+# NOTICE:  All information contained herein is, and remains the property of The Uplink TV
+# and its suppliers, if any.  The intellectual and technical concepts contained herein are
+# proprietary to The Uplink TV and its suppliers and may be covered by U.S. and Foreign
+# Patents, patents in process, and are protected by trade secret or copyright law.  Dissemination
+# of this information or reproduction of this material is strictly forbidden unless prior written
+# permission is obtained from The Uplink TV.
+
+    while [ "${1}" != "" ]; do
+       case "${1}" in
+           'i')
+               rm -rf "${KARAF_DATA:?}"
+               shift
+               ;;
+           '')
+               debug=true
+               shift
+               ;;
+           'status')
+               shift
+               ;;
+           'stop')
+               MAIN=org.apache.karaf.main.Stop
+               CHECK_ROOT_INSTANCE_RUNNING=false
+               nodebug=true
+               shift
+               ;;
+           'console')
+               CHECK_ROOT_INSTANCE_RUNNING=false
+               shift
+               ;;
+           'server')
+               OPTS="-Dkaraf.startLocalConsole=false -Dkaraf.startRemoteShell=true"
+               shift
+               ;;
+           'run')
+               OPTS="-Dkaraf.startLocalConsole=false -Dkaraf.startRemoteShell=true -Dkaraf.log.console=ALL"
+               shift
+               ;;
+           'daemon')
+               OPTS="-Dkaraf.startLocalConsole=false -Dkaraf.startRemoteShell=true"
+               KARAF_DAEMON="true"
+               KARAF_EXEC="exec"
+               shift
+               ;;
+           'client')
+               OPTS="-Dkaraf.startLocalConsole=true -Dkaraf.startRemoteShell=false"
+               CHECK_ROOT_INSTANCE_RUNNING=false
+               nodebug=true
+               shift
+               ;;
+           'classpath')
+               echo "Classpath: ${CLASSPATH}"
+               shift
+               ;;
+           *)
+               break
+               ;;
+       esac
+   done
