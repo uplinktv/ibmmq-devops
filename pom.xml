@@ -34,7 +34,7 @@
           <license>GPLv3 (c) 2020, The Uplink TV</license>
           <distribution>The Uplink TV</distribution>
           <group>Application/Messaging</group>
-          <!-- icon>src/main/resources/icon.gif</icon -->
+          <icon>target/classes/doc/theuplinktv.xpm</icon>
           <packager>TheUplinkTV</packager>
           <prefix>/opt/uplink/ibmmq-devops</prefix>
           <changelogFile>target/classes/changelog</changelogFile>
