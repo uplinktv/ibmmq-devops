@@ -12,6 +12,14 @@
 # of this information or reproduction of this material is strictly forbidden unless prior written
 # permission is obtained from The Uplink TV.
 
+
+ROOT_CMD_SET_LIMITS_SUB_CMD="mqm - nofile 65536"
+ROOT_CMD_SET_LIMITS="echo $ROOT_CMD_SET_LIMITS_SUB_CMD >> /etc/security/limits.conf"
+ROOT_CMD_APPLY_LIMITS="sysctl -p"
+
+RPM_REQ="bash bc ca-certificates file findutils gawk glibc-common grep passwd procps-ng sed shadow-utils tar util-linux which"
+RPM_INSTALL_DEPS_CMD="yum -y install $RPM_REQ"
+
 msg() {
     echo "${PROGNAME}: $*"
 }
@@ -23,7 +31,7 @@ fail() {
 
 detectHome() {
     if [ "x${IBMMQ_DEVOPS_HOME}" != "x" ]; then
-        msg "IBMMQ_DEVOPS_HOME was previously defined ${IBMMQ_DEVOPS_HOME}
+        msg "IBMMQ_DEVOPS_HOME was previously defined ${IBMMQ_DEVOPS_HOME}"
         unset IBMMQ_DEVOPS_HOME
     fi
     if [ "x${IBMMQ_DEVOPS_HOME}" = "x" ]; then
@@ -34,4 +42,86 @@ detectHome() {
     if [ ! -d "${IBMMQ_DEVOPS_HOME}" ]; then
         fail "IBMMQ_DEVOPS_HOME invalid or not specified: ${IBMMQ_DEVOPS_HOME}"
     fi
+
+    echo "Base dir: ${IBMMQ_DEVOPS_HOME}" 
+}
+
+download() {
+    echo -n "Downloading..."
+    wget -T5 -q -O data/mqadv_dev915_linux_x86-64.tar.gz https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/mqadv_dev915_linux_x86-64.tar.gz
+    echo "done"
+}
+
+extract() {
+    if [ ! -f data/mqadv_dev915_linux_x86-64.tar.gz ]; then
+	fail "IBM MQ media failed to download"
+    fi
+ 
+    echo -n "Extracting..."
+    PREV_DIR=`pwd`
+    cd data
+    tar zxf mqadv_dev915_linux_x86-64.tar.gz
+    cd $PREV_DIR
+    echo "done"
+}
+
+install_deps() {
+    echo -n "Updating limits..."
+    `$ROOT_CMD_SET_LIMITS`
+    `$ROOT_CMD_APPLY_LIMITS`
+    echo "done"
+    echo -n "Install deps cmd: $RPM_INSTALL_DEPS_CMD"
+    yum -y install $RPM_REQ 
+}
+
+install() {
+    if [ ! -d data/MQServer ]; then
+        fail "IBM MQ media failed to extract"
+    fi
+
+    echo -n "Installing..."
+    PREV_DIR=`pwd`
+    cd data/MQServer
+    ./mqlicense.sh -text_only -accept
+    
+    rpm -Uvh MQSeriesAMQP-*.rpm MQSeriesAMS-*.rpm MQSeriesBCBridge-*.rpm MQSeriesClient-*.rpm MQSeriesGSKit-*.rpm MQSeriesJava-*.rpm MQSeriesJRE-*.rpm MQSeriesRuntime-*.rpm MQSeriesSDK-*.rpm MQSeriesServer-*.rpm MQSeriesSFBridge-*.rpm MQSeriesXRService-*.rpm
+    cd $PREV_DIR
+    echo "done"
+}
+
+createQMgr() {
+   echo -n "Creating QMLAB1..."
+   . /opt/mqm/bin/setmqenv -n Installation1
+   /opt/mqm/bin/crtmqm -lc -lf 65535 -lp 3 -ls 2 -u SYSTEM.DEAD.LETTER.QUEUE QMLAB1
+   /opt/mqm/bin/strmqm QMLAB1
+   echo "done"
+}
+
+configureQMgr() {
+
+   . /opt/mqm/bin/setmqenv -n Installation1
+
+   /opt/mqm/bin/runmqsc QMLAB1 << EOF
+
+ALTER QMGR MAXMSGL(4194304)
+ALTER QL(SYSTEM.CLUSTER.TRANSMIT.QUEUE) MAXMSGL(4194304)
+
+DEFINE LISTENER(QMLAB1.LISTENER) TRPTYPE(TCP) CONTROL(QMGR) PORT(1414)
+START LISTENER(QMLAB1.LISTENER)
+
+DEFINE CHANNEL(QMLAB1.SVRCONN) CHLTYPE(SVRCONN) MCAUSER('mqadmin') MAXMSGL(4194304) DESCR('Channel for incoming clients')
+
+end
+EOF
+
+   /opt/mqm/bin/dspmq
+}
+
+uninstall() {
+    echo -n "Uninstalling..."
+    for i in MQSeriesAMQP MQSeriesAMS MQSeriesBCBridge MQSeriesClient MQSeriesGSKit MQSeriesJava MQSeriesJRE MQSeriesRuntime MQSeriesSDK MQSeriesServer MQSeriesSFBridge MQSeriesXRService
+    do 
+      rpm -e $i
+    done
+    echo "done"
 }

@@ -12,53 +12,56 @@
 # of this information or reproduction of this material is strictly forbidden unless prior written
 # permission is obtained from The Uplink TV.
 
+if [ -f "bin/inc" ]; then
+  . "bin/inc"
+fi
+
+detectHome
+
     while [ "${1}" != "" ]; do
        case "${1}" in
-           'i')
-               rm -rf "${KARAF_DATA:?}"
+#           'i')
+#               rm -rf "${KARAF_DATA:?}"
+#               shift
+#               ;;
+#           '')
+#               debug=true
+#               shift
+#               ;;
+#           'status')
+#               shift
+#               ;;
+#           'stop')
+#               MAIN=org.apache.karaf.main.Stop
+#               CHECK_ROOT_INSTANCE_RUNNING=false
+#               nodebug=true
+#               shift
+#               ;;
+           'download')
+               download
                shift
                ;;
-           '')
-               debug=true
+           'install')
+#               download
+#               extract
+               install_deps
+               install
                shift
                ;;
-           'status')
+           'uninstall')
+               uninstall
                shift
                ;;
-           'stop')
-               MAIN=org.apache.karaf.main.Stop
-               CHECK_ROOT_INSTANCE_RUNNING=false
-               nodebug=true
-               shift
-               ;;
-           'console')
-               CHECK_ROOT_INSTANCE_RUNNING=false
-               shift
-               ;;
-           'server')
-               OPTS="-Dkaraf.startLocalConsole=false -Dkaraf.startRemoteShell=true"
-               shift
-               ;;
-           'run')
-               OPTS="-Dkaraf.startLocalConsole=false -Dkaraf.startRemoteShell=true -Dkaraf.log.console=ALL"
-               shift
-               ;;
-           'daemon')
-               OPTS="-Dkaraf.startLocalConsole=false -Dkaraf.startRemoteShell=true"
-               KARAF_DAEMON="true"
-               KARAF_EXEC="exec"
-               shift
-               ;;
-           'client')
-               OPTS="-Dkaraf.startLocalConsole=true -Dkaraf.startRemoteShell=false"
-               CHECK_ROOT_INSTANCE_RUNNING=false
-               nodebug=true
-               shift
-               ;;
-           'classpath')
-               echo "Classpath: ${CLASSPATH}"
-               shift
-               ;;
+#           'client')
+#               OPTS="-Dkaraf.startLocalConsole=true -Dkaraf.startRemoteShell=false"
+#               CHECK_ROOT_INSTANCE_RUNNING=false
+#               nodebug=true
+#               shift
+#               ;;
+#          'classpath')
+#              echo "Classpath: ${CLASSPATH}"
+#              shift
+#               ;;
            *)
                break
                ;;
