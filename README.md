@@ -87,9 +87,9 @@ $ yum -y erase MQSeriesAMQP MQSeriesAMS MQSeriesBCBridge MQSeriesClient MQSeries
 
 ### Links
 
-IBM MQ default objects [IBM MQ docs] (https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.ref.con.doc/q081590_.htm)
+IBM MQ default objects [IBM MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.ref.con.doc/q081590_.htm)
 
-Installation video [UplinkTV YouTube] (https://www.youtube.com/watch?v=DVKt_ytI7OQ)
+IBM MQ on Linux Installation video [UplinkTV YouTube video](https://www.youtube.com/watch?v=DVKt_ytI7OQ)
 
 ### Support or Contact
 
