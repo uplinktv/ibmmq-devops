@@ -1,10 +1,8 @@
-## Uplink TV - Install IBM MQ
+## Uplink TV - Install IBM MQ on Linux
 
+This document describes the steps for installing IBM MQ on Linux
 
 ### Installation Steps
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
 
 ##### Add UNIX user account 'mqm'
 
