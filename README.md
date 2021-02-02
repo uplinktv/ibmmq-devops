@@ -69,6 +69,54 @@ $ printf "%s\n\n" TestMessage1 | /opt/mqm/samp/bin/amqsput ORDER.INPUT QMLAB1
 $ /opt/mqm/samp/bin/amqsget ORDER.INPUT QMLAB1
 ```
 
+##### Optionally, disable Channel Auth to allow network users to connect
+```
+$ . /opt/mqm/bin/setmqenv -n Installation1
+$ /opt/mqm/bin/runmqsc QMLAB1 << EOF
+
+ALTER QMGR CHLAUTH(DISABLED)
+
+EOF
+```
+
+##### Optionally, create a user with admin-level privileges 'mqadmin'
+
+Create UNIX account
+```
+$ useraddmin mqadmin
+```
+
+Apply IBM MQ QMgr privileges
+```
+$ . /opt/mqm/bin/setmqenv -n Installation1
+$ /opt/mqm/bin/runmqsc QMLAB1 << EOF
+
+SET AUTHREC PROFILE(*) OBJTYPE(QMGR) GROUP('mqadmin') AUTHADD(CONNECT, ALL) 
+SET AUTHREC PROFILE('@class') OBJTYPE(AUTHINFO) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(AUTHINFO) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(CHANNEL) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(CHANNEL) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(CLNTCONN) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(CLNTCONN) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(COMMINFO) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(COMMINFO) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(LISTENER) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(LISTENER) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(NAMELIST) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(NAMELIST) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(PROCESS) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(PROCESS) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(QUEUE) GROUP('mqadmin') AUTHADD(CRT)
+SET AUTHREC PROFILE('**') OBJTYPE(QUEUE) GROUP('mqadmin') AUTHADD(ALL)
+SET AUTHREC PROFILE('@class') OBJTYPE(SERVICE) GROUP('mqadmin') AUTHADD(CRT) 
+SET AUTHREC PROFILE('**') OBJTYPE(SERVICE) GROUP('mqadmin') AUTHADD(ALL) 
+SET AUTHREC PROFILE('@class') OBJTYPE(TOPIC) GROUP('mqadmin') AUTHADD(CRT) 
+SET AUTHREC PROFILE('**') OBJTYPE(TOPIC) GROUP('mqadmin') AUTHADD(ALL) 
+
+REFRESH SECURITY
+
+EOF
+```
 
 ### Uninstall steps
 
