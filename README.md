@@ -1,6 +1,6 @@
-## Uplink TV - Install IBM MQ on Linux
+## Uplink TV - Install IBM MQ on CentOS/RedHat Linux
 
-This document describes the steps for installing IBM MQ on Linux
+This document describes the steps for installing IBM MQ on CentOS/RedHat Linux
 
 ### Installation Steps
 
@@ -26,9 +26,13 @@ $ sysctl -p
 ##### Install dependencies and IBM MQ RPMS
 
 ```
-$ yum -y install bash bc ca-certificates file findutils gawk glibc-common grep passwd procps-ng sed shadow-utils tar util-linux which
+$ yum -y install bash bc ca-certificates file findutils gawk glibc-common grep passwd procps-ng sed shadow-utils tar util-linux which wget
 
-$ wget -T5 -q -O mqadv_dev915_linux-x86-64.tar.gz https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/mqadv_dev915_linux_x86-64.tar.gz
+$ wget -T5 -q -O mqadv_dev921_linux_x86-64.tar.gz https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/mqadv_dev921_linux_x86-64.tar.gz
+
+$ tar -zxvf mqadv_dev921_linux_x86-64.tar.gz
+
+$ cd MQServer
 
 $ ./mqlicense.sh -text_only -accept
 
