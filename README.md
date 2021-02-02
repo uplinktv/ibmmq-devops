@@ -83,7 +83,7 @@ EOF
 
 Create UNIX account
 ```
-$ useraddmin mqadmin
+$ useradd mqadmin
 ```
 
 Apply IBM MQ QMgr privileges
