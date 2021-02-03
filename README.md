@@ -83,14 +83,14 @@ As the root, add a user and a group
 
 As the 'mqm' user, configure permissions
 ```
-/opt/mqm/bin/setmqaut -m QMLAB1 -t qmgr -g ordergroup +connect +inq +dsp
-/opt/mqm/bin/setmqaut -m QMLAB1 -n ORDER.** -t queue -g ordergroup +allmqi +dsp
+$ /opt/mqm/bin/setmqaut -m QMLAB1 -t qmgr -g ordergroup +connect +inq +dsp
+$ /opt/mqm/bin/setmqaut -m QMLAB1 -n ORDER.** -t queue -g ordergroup +allmqi +dsp
 ```
 
 As the 'mqm' user, configure channel auth
 ```
-. /opt/mqm/bin/setmqenv -n Installation1
-/opt/mqm/bin/runmqsc QMLAB1 << EOF
+$ . /opt/mqm/bin/setmqenv -n Installation1
+$ /opt/mqm/bin/runmqsc QMLAB1 << EOF
 
 SET CHLAUTH(QMLAB1.SVRCONN) TYPE(ADDRESSMAP) ADDRESS('*') USERSRC(NOACCESS)
 SET CHLAUTH(QMLAB1.SVRCONN) TYPE(USERMAP) CLNTUSER('order') USERSRC(MAP) MCAUSER('order') ADDRESS('*') ACTION(ADD)
@@ -100,15 +100,15 @@ EOF
 
 As the 'mqm' user, validate channel auth
 ```
-. /opt/mqm/bin/setmqenv -n Installation1
-/opt/mqm/bin/runmqsc QMLAB1 << EOF
+$ . /opt/mqm/bin/setmqenv -n Installation1
+$ /opt/mqm/bin/runmqsc QMLAB1 << EOF
 
 DISPLAY CHLAUTH(QMLAB1.SVRCONN) MATCH(RUNCHECK) CLNTUSER('order') ADDRESS('1.2.3.4')
 
 EOF
 ```
 
-##### Optionally, disable Channel Auth to allow network users to connect
+##### Optionally, disable Channel Auth to allow _all_ network users to connect
 ```
 $ . /opt/mqm/bin/setmqenv -n Installation1
 $ /opt/mqm/bin/runmqsc QMLAB1 << EOF
