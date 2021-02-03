@@ -73,6 +73,41 @@ $ printf "%s\n\n" TestMessage1 | /opt/mqm/samp/bin/amqsput ORDER.INPUT QMLAB1
 $ /opt/mqm/samp/bin/amqsget ORDER.INPUT QMLAB1
 ```
 
+##### Configure per-user security
+
+As the root, add a user and a group 
+```
+# groupadd ordergroup
+# useradd -G ordergroup order
+```
+
+As the 'mqm' user, configure permissions
+```
+/opt/mqm/bin/setmqaut -m QMLAB1 -t qmgr -g ordergroup +connect +inq +dsp
+/opt/mqm/bin/setmqaut -m QMLAB1 -n ORDER.** -t queue -g ordergroup +allmqi +dsp
+```
+
+As the 'mqm' user, configure channel auth
+```
+. /opt/mqm/bin/setmqenv -n Installation1
+/opt/mqm/bin/runmqsc QMLAB1 << EOF
+
+SET CHLAUTH(QMLAB1.SVRCONN) TYPE(ADDRESSMAP) ADDRESS('*') USERSRC(NOACCESS)
+SET CHLAUTH(QMLAB1.SVRCONN) TYPE(USERMAP) CLNTUSER('order') USERSRC(MAP) MCAUSER('order') ADDRESS('*') ACTION(ADD)
+
+EOF
+```
+
+As the 'mqm' user, validate channel auth
+```
+. /opt/mqm/bin/setmqenv -n Installation1
+/opt/mqm/bin/runmqsc QMLAB1 << EOF
+
+DISPLAY CHLAUTH(QMLAB1.SVRCONN) MATCH(RUNCHECK) CLNTUSER('order') ADDRESS('1.2.3.4')
+
+EOF
+```
+
 ##### Optionally, disable Channel Auth to allow network users to connect
 ```
 $ . /opt/mqm/bin/setmqenv -n Installation1
